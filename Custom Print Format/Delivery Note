@@ -1,0 +1,98 @@
+{%- macro add_header(page_num, max_pages, doc, letter_head, no_letterhead) -%}
+    {% if letter_head and not no_letterhead %}
+    <div class="letter-head">{{ letter_head }}</div>
+    {% endif %}
+    {% if max_pages > 1 %}
+    <p class="text-right">{{ _("Page #{0} of {1}").format(page_num, max_pages) }}</p>
+    {% endif %}
+{%- endmacro -%}
+
+{{ add_header(0, 1, doc, letter_head, no_letterhead) }}
+<br>
+
+<p class="text-center"><b>{{ _("PRODUCT RELEASE") }}</b></p><br>
+
+<div class="row">        
+        <div class="col-xs-6">            
+        <div class="row">
+            <div class="col-xs-5 text-right"><label>SHIP TO:</label></div>
+            <div class="col-xs-7 ">{{ doc.customer or '' }} </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-5 text-right"></div>
+            <div class="col-xs-7 ">{{ doc.shipping_address or '' }}</div>
+        </div>
+         {%- if doc.contact_display -%}  
+         <div class="row">
+            <div class="col-xs-5 text-right"><label>ATTN:</label></div>
+            <div class="col-xs-7 "> {{ doc.contact_display or '' }}</div>           
+        </div>
+         {%- endif -%}
+        </div>
+        <div class="col-xs-6">
+         <div class="row">
+            <div class="col-xs-5 text-right"> <label>RELEASE DATE:</label> </div>
+            <div class="col-xs-7 "> {{ doc.get_formatted("posting_date") or '' }}<br>
+            </div>
+        </div>
+         <div class="row">
+          <div class="col-xs-5 text-right"> <label>RELEASE:</label></div>
+            <div class="col-xs-7 "> {{ doc.name or '' }} </div>
+        </div>
+         {%- if doc.lr_date -%}  
+         <div class="row">
+            <div class="col-xs-5 text-right"> <label>SHIP DATE:</label> </div>
+            <div class="col-xs-7 "> {{ doc.get_formatted("lr_date") or '' }}<br> </div>
+        </div>
+        {%- endif -%}
+
+        {%- if doc.po_no -%}          
+         <div class="row">
+            <div class="col-xs-5 text-right"><label>BUYER’S P.O.:</label>  </div>
+            <div class="col-xs-7 "> {{ doc.po_no or '' }} </div>
+        </div>    
+        {%- endif -%}    
+       
+        <div class="row">
+            <div class="col-xs-5 text-right"><label>SALE REP SM:</label>  </div>
+            <div class="col-xs-7 "> </div>
+        </div> 
+         {%- if doc.shipping_terms -%}  
+         <div class="row">
+            <div class="col-xs-5 text-right"><label>SHIPPING TERMS:</label>  </div>
+            <div class="col-xs-7 ">{{ doc.shipping_terms or '' }}</div>
+        </div>     
+         {%- endif -%} 
+        </div>
+            
+        </div>
+        
+<br>
+<table class="table table-condensed table-hover table-bordered">
+        <tr>
+            <th>Sr</th>
+            <th class="text-right">Item</th>
+            <th>Description</th>
+            <th>Quantity</th>
+        </tr>
+        {%- for row in doc.delivery_note_details -%}
+        <tr>
+            <td style="width: 3%; text-align: right;">{{ row.idx }}</td>
+            <td style="width: 10%; text-align: right;"><b>{{ row.item_name }} </b></td>
+            <td style="width: 37%; text-align: left;">
+{%- if row.batch_no -%}
+<b>Batch No: </b>{{ row.batch_no or '' }} <br>
+{%- endif -%}
+<b> Description: </b>{{ row.description or '' }}
+<br><b>Total Fill Quantity: </b>{{ row.quantity_in_weight }}  {{ row.weight_uom }}
+<br><b>Quantity: </b>{{ row.qty }} {{ row.stock_uom }}
+</td>
+          <td style="width: 20%;"> {{ row.qty }} {{ row.stock_uom }}</td>
+        </tr>
+        {%- endfor -%}
+    </tbody>
+</table>
+<br>
+<div class="row">
+ <div class="col-xs-12 text-left">{{ doc.terms or '' }}</div>
+</div>

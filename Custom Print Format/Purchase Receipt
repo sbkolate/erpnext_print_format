@@ -1,0 +1,97 @@
+{%- macro add_header(page_num, max_pages, doc, letter_head, no_letterhead) -%}
+    {% if letter_head and not no_letterhead %}
+    <div class="letter-head">{{ letter_head }}</div>
+    {% endif %}
+    {% if max_pages > 1 %}
+    <p class="text-right">{{ _("Page #{0} of {1}").format(page_num, max_pages) }}</p>
+    {% endif %}
+{%- endmacro -%}
+
+{{ add_header(0, 1, doc, letter_head, no_letterhead) }}
+<br>
+
+<p class="text-center"><b>{{ _("Incoming Product Notice") }}</b></p><br>
+
+<div class="row">        
+        <div class="col-xs-6">            
+        <div class="row">
+            <div class="col-xs-5 text-right"><label>To:</label></div>
+            <div class="col-xs-7 ">{{ doc.supplier_warehouse or '' }} </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-5 text-right"></div>
+            <div class="col-xs-7 ">{{ doc.address_line_1 or '' }}</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-5 text-right"></div>
+            <div class="col-xs-7 ">{{ doc.address_line_2 or '' }}</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-5 text-right"></div>
+            <div class="col-xs-7 ">{{ doc.city or '' }}</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-5 text-right"></div>
+            <div class="col-xs-7 ">{{ doc.state or '' }}</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-5 text-right"></div>
+            <div class="col-xs-7 ">{{ doc.warehouse_zipcode or '' }}</div>
+        </div>
+         <div class="row">
+            <div class="col-xs-5 text-right"><label>Date:</label></div>
+            <div class="col-xs-7 "> {{ doc.get_formatted("posting_date") or '' }}</div>           
+        </div>
+        </div>
+        <div class="col-xs-6">
+         <div class="row">
+            <div class="col-xs-5 text-right"> <label>From:</label> </div>
+            <div class="col-xs-7 "> {{ doc.supplier_name or '' }}<br>
+            </div>
+        </div>
+          <div class="row">
+            <div class="col-xs-5 text-right"></div>
+            <div class="col-xs-7 ">{{ doc.address_display or '' }}</div>
+        </div>
+         <div class="row">
+          <div class="col-xs-5 text-right"> <label>Subject:</label></div>
+            <div class="col-xs-7 "> Delivery Notification for {{ doc.get_formatted("posting_date") or '' }}</div>
+        </div>
+        </div>
+            
+        </div>
+        
+<br>
+<div class="row">
+ <div class="col-xs-12 text-left"> Dear {{ doc.warehouse_contact_name or '' }},<br><br>
+
+This is to notify you that the following product is being delivered to your warehouse.  You should receive a phone call for a delivery appointment. 
+</div>
+</div>
+<br>
+<table class="table table-condensed table-hover table-bordered">
+        <tr>
+            <th>Sr</th>
+            <th class="text-right">Code#</th>
+            <th>Product Description</th>
+            <th>SP-Code</th>
+            <th>Quantity</th>
+            <th>Lot No.</th>
+        </tr>
+        {%- for row in doc.purchase_receipt_details -%}
+        <tr>
+            <td style="width: 3%; text-align: right;">{{ row.idx }}</td>
+            <td style="width: 7%; text-align: right;"></td>
+            <td style="width: 30%; text-align: right;">{{ row.item_name or ''}} {{ row.quantity_in_weight }}  {{ row.weight_uom }}</td>
+            <td style="width: 20%; text-align: right;">{{ row.item_code or ''}}</td>
+            <td style="width: 20%;"> {{ row.qty }} {{ row.stock_uom }}</td>
+            <td style="width: 20%; text-align: right;">PLEASE NOTIFY*</td>
+          
+        </tr>
+        {%- endfor -%}
+    </tbody>
+</table>
+<br>
+<div class="row">
+ <div class="col-xs-12 text-left">{{ doc.terms or '' }}</div>
+</div>
