@@ -15,44 +15,43 @@
     {% endif %}
 {%- endmacro -%}
 
-<small>
 {{ add_header(0,1,doc,letter_head, no_letterhead) }}
-<big>
+<label>
 <p class="text-center"><b>{{ _("Sales Order") }}</b></p><br>
-</big>
+</label>
 <div class="row">        
      <div class="col-xs-6">            
         <div class="row">
-            <div class="col-xs-5 text-right"><big><b>Customer Name</b></big></div>
-            <div class="col-xs-7 "><big>{{ doc.customer }}</big> </div>
+            <div class="col-xs-5 text-right"><label>Customer Name</label></div>
+            <div class="col-xs-7 ">{{ doc.customer }} </div>
         </div>
         <div class="row">
-            <div class="col-xs-5 text-right"><big><b>Address</b></big></div>
-            <div class="col-xs-7 "><big>{{ doc.address_display or ''}}</big></div>
+            <div class="col-xs-5 text-right"><label>Address</label></div>
+            <div class="col-xs-7 ">{{ doc.address_display or ''}}</div>
         </div>         
     </div>
 
     <div class="col-xs-6">
         <div class="row">
-            <div class="col-xs-5 text-right"><big><b>Order No</b></big></div>
-            <div class="col-xs-7 "><big>{{ doc.name or ''}}</big> </div>
+            <div class="col-xs-5 text-right"><label>Order No</label></div>
+            <div class="col-xs-7 ">{{ doc.name or ''}}</div>
         </div>
         <div class="row">
-            <div class="col-xs-5 text-right"> <big><b>Date</b></big> </div>
+            <div class="col-xs-5 text-right"> <label>Date</label> </div>
             <div class="col-xs-7 ">
-                <big>{{ doc.get_formatted("transaction_date") or ''}}</big></div>
+                {{ doc.get_formatted("transaction_date") or ''}}</div>
         </div>    
          {%- if doc.po_no -%}
         <div class="row">
-            <div class="col-xs-5 text-right"><big><b>PO No</b></big></div>
-            <div class="col-xs-7 "><big>{{ doc.po_no or ''}}</big> </div>
+            <div class="col-xs-5 text-right"><label>PO No</label></div>
+            <div class="col-xs-7 ">{{ doc.po_no or ''}}</div>
         </div>
          {%- endif -%}
         {%- if doc.po_date -%}
         <div class="row">
-            <div class="col-xs-5 text-right"> <big><b>PO Date</b></big> </div>
+            <div class="col-xs-5 text-right"><label>PO Date</label> </div>
             <div class="col-xs-7 ">
-                <big>{{ doc.get_formatted("po_date") or ''}}</big></div>
+                {{ doc.get_formatted("po_date") or ''}}</div>
         </div>  
         {%- endif -%}
     </div>
@@ -95,9 +94,9 @@
    
 <div class="row">
     <div class="col-xs-6 text-right"></div>
-    <div class="col-xs-4 text-right"> <big><b>{{ _("Net Total") }}</b></big></div>
+    <div class="col-xs-4 text-right"><label>{{ _("Net Total") }}</label></div>
     <div class="col-xs-2 ">
-      <big>{{ doc.get_formatted("total") or '' }}</big>
+      {{ doc.get_formatted("total") or '' }}
     </div>
 </div>  
 
@@ -106,8 +105,8 @@
     {%- if row.tax_amount -%}      
 <div class="row">
     <div class="col-xs-6 text-right"></div>
-    <div class="col-xs-4 text-right"> <big><b> {{ row.description }}</b></big></div>
-    <div class="col-xs-2 "><big>{{ row.get_formatted("tax_amount", doc) }}</big></div>
+    <div class="col-xs-4 text-right"><label>{{ row.description }}</label></div>
+    <div class="col-xs-2 ">{{ row.get_formatted("tax_amount", doc) }}</div>
 </div> 
     {%- endif -%}
     {%- endif -%}
@@ -116,23 +115,17 @@
 {%- if doc.discount_amount -%}
     <div class="row">
          <div class="col-xs-6 text-right"></div>
-         <div class="col-xs-4 text-right"> <big><b>{{ _("Discount") }}</b></big></div>
-         <div class="col-xs-2 "><big>{{ doc.get_formatted("discount_amount") }}</big></div>
+         <div class="col-xs-4 text-right"><label>{{ _("Discount") }}</label></div>
+         <div class="col-xs-2 ">{{ doc.get_formatted("discount_amount") }}</div>
     </div> 
  {%- endif -%}         
            
 <div class="row">
     <div class="col-xs-6 text-right"></div>
-    <div class="col-xs-4 text-right">
-        <big><b>{{ _("Grand Total") }}</b></big>
-    </div>
-    <div class="col-xs-2 ">
-       <big>
-       {{ doc.get_formatted("grand_total") }}</big>
-    </div>
+    <div class="col-xs-4 text-right"><label>{{ _("Grand Total") }}</label></div>
+    <div class="col-xs-2 ">{{ doc.get_formatted("grand_total") }}</div>
 </div>
 
 <div class="row">
  <div class="col-xs-12 text-left">{{ doc.terms or '' }}</div>
 </div>
-</small>
