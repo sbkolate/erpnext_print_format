@@ -1,0 +1,153 @@
+{%- macro add_header(page_num, max_pages, doc, letter_head, no_letterhead) -%}
+    {% if letter_head and not no_letterhead %}
+    <div class="letter-head">{{ letter_head }}</div>
+    {% endif %}
+    {%- if doc.meta.is_submittable and doc.docstatus==0-%}
+    <div class="alert alert-info text-center">
+        <h4 style="margin: 0px;">{{ _("DRAFT") }}</h4></div>
+    {%- endif -%}
+    {%- if doc.meta.is_submittable and doc.docstatus==2-%}
+    <div class="alert alert-danger text-center">
+        <h4 style="margin: 0px;">{{ _("CANCELLED") }}</h4></div>
+    {%- endif -%}
+    {% if max_pages > 1 %}
+    <p class="text-right">{{ _("Page #{0} of {1}").format(page_num, max_pages) }}</p>
+    {% endif %}
+{%- endmacro -%}
+
+{{ add_header(0,1,doc,letter_head, no_letterhead) }}
+<br>
+To, <br>
+{{ doc.customer_name }}
+{{ doc.response }}
+<div class="page-break"></div>
+
+{{ add_header(0,1,doc,letter_head, no_letterhead) }}
+
+<div class="row">    
+             <div class="col-xs-2 text-left"><label>Quotation No </label></div>
+             <div class="col-xs-6 ">{{ doc.name }}</div>
+             <div class="col-xs-2 "><label>Date</label> </div>
+             <div class="col-xs-2 ">{{ doc.get_formatted("transaction_date") or ''}}</div>
+            
+</div> 
+<div class="row">   
+         <div class="col-xs-2 text-left"><label>Customer</label></div> 
+         <div class="col-xs-6">{{ doc.customer }}</div>
+         <div class="col-xs-2 "><label>Validity Till</label></div> 
+         <div class="col-xs-2 ">{{ doc.get_formatted("validity_till") or ''}}</div>
+</div>  
+<div class="row">
+            <div class="col-xs-2 text-left"><label>Address</label></div> 
+            <div class="col-xs-10">{{ doc.address_display or ''}}</div>
+</div> 
+<div class="row">
+            <div class="col-xs-2 text-left"><label>Contact</label></div> 
+            <div class="col-xs-8">
+                {{ doc.contact_display or ''}} ( {{ doc.contact_email or ''}}, {{ doc.contact_mobile or ''}})
+            </div>
+</div>  
+<div class="row">
+            <div class="col-xs-3 text-left"><label>Your Reference</label></div> 
+            <div class="col-xs-9">letter</div>
+</div> 
+                {% if doc.submitted_by -%}
+    {% set u = frappe.get_doc("User", doc.submitted_by) %}
+<div class="row">
+            <div class="col-xs-2 text-left"><label>Submitted By</label></div> 
+            <div class="col-xs-8">{{ u.first_name or ''}} ( {{ u.email or ''}}, {{ u.mobile_no or ''}})</div>
+</div>  
+		{%- endif %}
+        
+<br>
+
+<table class="table table-condensed table-hover table-bordered">
+        <tr>
+            <th>Sr</th>
+            <th>Description</th>
+            <th class="text-right">Quantity</th>
+            <th class="text-right">Rate</th>
+            <th class="text-right">Amount</th>
+        </tr>
+        {%- for row in doc.items -%}
+        <tr>
+
+            <td style="width: 3%;">{{ row.idx }}</td>
+            <td style="width: 57%;">
+                 <b>{{ row.item_code or '' }} </b><br> 
+                 {{ row.description or '' }} 
+                {% if row.in_format_data("image") and row.get("image") -%}
+		<div class="pull-left" style="max-width: 100%; margin-right: 10px;">
+		    <img src="{{ row.image }}" style="width: 100%">
+		</div>
+		{%- endif %}
+             </td>
+            <td style="width: 10%; text-align: right;">{{ row.qty }}</td>
+            <td style="width: 15%; text-align: right;">
+                
+                {{ row.get_formatted("rate", doc) or ''}}
+            <td style="width: 15%; text-align: right;">{{
+                row.get_formatted("amount", doc) or ''}}</td>
+        </tr>
+        {% if row.page_break -%}
+            </tbody>
+            </table>
+        <div class="page-break"></div> 
+        {{ add_header(0,1,doc,letter_head, no_letterhead) }}
+             <table class="table table-condensed table-hover table-bordered">
+		<tr>
+		    <th>Sr</th>
+		    <th>Description</th>
+		    <th class="text-right">Quantity</th>
+		    <th class="text-right">Rate</th>
+		    <th class="text-right">Amount</th>
+		</tr>
+        {%- endif %}
+        {%- endfor -%}
+
+    </tbody>
+</table>
+
+<br>
+
+<div class="row">
+    <div class="col-xs-6 text-right"></div>
+    <div class="col-xs-4 text-right"><label>{{ _("Net Total") }}</label></div>
+    <div class="col-xs-2 ">
+      {{ doc.get_formatted("total") or '' }}
+    </div>
+</div>  
+
+{%- for row in doc.taxes -%}
+    {%- if not row.included_in_print_rate -%}
+    {%- if row.tax_amount -%}      
+<div class="row">
+    <div class="col-xs-6 text-right"></div>
+    <div class="col-xs-4 text-right"><label>{{ row.description }}</label></div>
+    <div class="col-xs-2 ">{{ row.get_formatted("tax_amount", doc) }}</div>
+</div> 
+    {%- endif -%}
+    {%- endif -%}
+{%- endfor -%}
+
+{%- if doc.discount_amount -%}
+    <div class="row">
+         <div class="col-xs-6 text-right"></div>
+         <div class="col-xs-4 text-right"><label>{{ _("Discount") }}</label></div>
+         <div class="col-xs-2 ">{{ doc.get_formatted("discount_amount") }}</div>
+    </div> 
+ {%- endif -%}         
+           
+<div class="row">
+    <div class="col-xs-6 text-right"></div>
+    <div class="col-xs-4 text-right"><label>{{ _("Grand Total") }}</label></div>
+    <div class="col-xs-2 ">{{ doc.get_formatted("grand_total") }}</div>
+</div>
+
+<div class="page-break"></div>
+
+{{ add_header(0,1,doc,letter_head, no_letterhead) }}
+
+<div class="row">
+ <div class="col-xs-12 text-left">{{ doc.terms or '' }}</div>
+</div>
