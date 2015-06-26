@@ -100,13 +100,13 @@
     </div>
 </div>  
 
-{%- for row in doc.other_charges -%}
+{%- for row in doc.taxes -%}
     {%- if not row.included_in_print_rate -%}
     {%- if row.tax_amount -%}      
 <div class="row">
     <div class="col-xs-6 text-right"></div>
-    <div class="col-xs-4 text-right"><label>{{ row.description }}</label></div>
-    <div class="col-xs-2 ">{{ row.get_formatted("tax_amount", doc) }}</div>
+    <div class="col-xs-3 text-right"><label>{{ row.description }}</label></div>
+    <div class="col-xs-3 text-right">{{ row.get_formatted("tax_amount", doc) }}</div>
 </div> 
     {%- endif -%}
     {%- endif -%}
